@@ -7,7 +7,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value = "/websocket")
+@ServerEndpoint(value = "/echo")
 @Component
 public class MyWebSocket {
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
