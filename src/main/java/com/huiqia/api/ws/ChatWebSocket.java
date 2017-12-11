@@ -1,13 +1,14 @@
 package com.huiqia.api.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.huiqia.api.model.WebSocketEvent;
+import com.huiqia.api.model.WebSocketEventLogin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.nio.ByteBuffer;
 
 @Component
 @ServerEndpoint(value = "/chat")
@@ -24,9 +25,26 @@ public class ChatWebSocket {
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message, Session session) throws Exception {
+        logger.info(message);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        WebSocketEvent value = mapper.readValue(message, WebSocketEvent.class);
+
+        switch (value.getEventType()) {
+            case LOGIN:
+                WebSocketEventLogin webSocketEventLogin = mapper.readValue(value.getMsg(), WebSocketEventLogin.class);
+            case LOGOUT:
+
+            case CHAT:
+            default:
+        }
+
+//        WebSocketEvent value = JSON.parseObject(message, WebSocketEvent.class);
         logger.info("{}", session.getQueryString());
-        session.getAsyncRemote().sendText("do you say: " + message);
+
+        session.getAsyncRemote().sendText(mapper.writeValueAsString(value));
         logger.info("收到消息");
     }
 
