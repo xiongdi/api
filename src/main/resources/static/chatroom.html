@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script>
+        var id = Math.random();
+        // Create WebSocket connection.
+        const socket = new WebSocket('ws://localhost:8080/chat');
+
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            socket.send(JSON.stringify({
+                eventType: 'OPENED',
+                date: new Date(),
+                msg: JSON.stringify({
+                    id: id
+                })
+            }));
+        });
+
+        // Listen for messages
+        socket.addEventListener('message', function (event) {
+            console.log('Message from server ', event.data);
+            const data = JSON.parse(event.data);
+            if (data.eventType == 'OPENED') {
+                const msg = JSON.parse(data.msg);
+                console.log('open success, this is user id: %s', msg.id)
+            } else if (data.eventType == 'CHAT') {
+                const msg = JSON.parse(data.msg);
+                console.log('server send to me: %s', msg.content);
+                const room = document.getElementById('room');
+
+                $('#room').append()
+            }
+
+        });
+
+        socket.addEventListener('close', function (event) {
+            console.log('socket closed!')
+        })
+
+        function sendMessage() {
+            const message = document.getElementById("message");
+
+            console.log(message);
+            socket.send(JSON.stringify({
+                eventType: 'CHAT',
+                date: new Date(),
+                msg: JSON.stringify({
+                    date: new Date(),
+                    content: message.value
+                })
+            }));
+        }
+
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <ul id="room" class="list-group">
+        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Morbi leo risus</li>
+        <li class="list-group-item">Porta ac consectetur ac</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+    </ul>
+    <form>
+        <div class="form-group">
+            <label id="name">Say:</label>
+            <input type="text" class="form-control" id="message">
+        </div>
+        <button type="button" class="btn btn-default" onclick="sendMessage()">发送</button>
+    </form>
+
+</div>
+
+</body>
+</html>

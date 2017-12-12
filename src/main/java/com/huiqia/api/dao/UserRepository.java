@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByName(String name);
 
-    User findByNameAndAge(String name, Integer age);
+    User findUserById(Long id);
+    User findUsersByArea(String area);
 
     @Query("select u from User u where u.name=:name")
-    User findUser(@Param("name") String name);
+    User findUserByName(String name);
 }
